@@ -1,1 +1,10 @@
-# drt-sdk-dapp-core
+# `core-library`
+
+> TODO: description
+
+## Usage
+
+```
+
+// TODO: DEMONSTRATE API
+```
