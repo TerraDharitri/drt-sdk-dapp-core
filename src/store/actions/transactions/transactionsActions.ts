@@ -1,37 +1,36 @@
+import { getTransactionsSessionStatus } from 'core/managers/TransactionManager/helpers/getTransactionsStatus';
 import { getStore } from 'store/store';
 import {
   TransactionBatchStatusesEnum,
   TransactionServerStatusesEnum
 } from 'types/enums.types';
-import { ServerTransactionType } from 'types/serverTransactions.types';
-import { SignedTransactionType } from 'types/transactions.types';
 import {
-  getIsTransactionFailed,
-  getIsTransactionNotExecuted,
-  getIsTransactionSuccessful
-} from './transactionStateByStatus';
-
-export interface UpdateSignedTransactionStatusPayloadType {
-  sessionId: string;
-  transactionHash: string;
-  status: TransactionServerStatusesEnum | TransactionBatchStatusesEnum;
-  serverTransaction?: ServerTransactionType;
-  errorMessage?: string;
-  inTransit?: boolean;
-}
+  TransactionsDisplayInfoType,
+  SignedTransactionType
+} from 'types/transactions.types';
 
 export const createTransactionsSession = ({
-  transactions
+  transactions,
+  transactionsDisplayInfo,
+  status
 }: {
   transactions: SignedTransactionType[];
+  transactionsDisplayInfo?: TransactionsDisplayInfoType;
+  status: TransactionBatchStatusesEnum | TransactionServerStatusesEnum;
 }) => {
   const sessionId = Date.now().toString();
-  getStore().setState(({ transactions: state }) => {
-    state[sessionId] = {
-      transactions,
-      status: TransactionBatchStatusesEnum.sent
-    };
-  });
+  getStore().setState(
+    ({ transactions: state }) => {
+      state[sessionId] = {
+        transactions,
+        status,
+        transactionsDisplayInfo,
+        interpretedTransactions: {}
+      };
+    },
+    false,
+    'createTransactionsSession'
+  );
   return sessionId;
 };
 
@@ -44,61 +43,80 @@ export const updateTransactionsSession = ({
   status: TransactionBatchStatusesEnum;
   errorMessage?: string;
 }) => {
-  getStore().setState(({ transactions: state }) => {
-    state[sessionId].status = status;
-    state[sessionId].errorMessage = errorMessage;
-  });
+  getStore().setState(
+    ({ transactions: state }) => {
+      state[sessionId].status = status;
+      state[sessionId].errorMessage = errorMessage;
+    },
+    false,
+    'updateTransactionsSession'
+  );
 };
 
-export const updateSignedTransactionStatus = (
-  payload: UpdateSignedTransactionStatusPayloadType
-) => {
-  const {
-    sessionId,
-    status,
-    errorMessage,
-    transactionHash,
-    serverTransaction,
-    inTransit
-  } = payload;
-  getStore().setState(({ transactions: state }) => {
-    const transactions = state[sessionId]?.transactions;
-    if (transactions != null) {
-      state[sessionId].transactions = transactions.map((transaction) => {
-        if (transaction.hash === transactionHash) {
-          return {
-            ...(serverTransaction ?? {}),
-            ...transaction,
-            status: status as TransactionServerStatusesEnum,
-            errorMessage,
-            inTransit
-          };
+export const updateTransactionStatus = ({
+  sessionId,
+  transaction: updatedTransaction
+}: {
+  sessionId: string;
+  transaction: SignedTransactionType;
+}) => {
+  getStore().setState(
+    ({ transactions: state }) => {
+      const transactions = state[sessionId]?.transactions;
+      if (transactions != null) {
+        state[sessionId].transactions = transactions.map((transaction) => {
+          if (transaction.hash === updatedTransaction.hash) {
+            return {
+              ...transaction,
+              ...(updatedTransaction ?? {})
+            };
+          }
+          return transaction;
+        });
+
+        const status = getTransactionsSessionStatus(transactions);
+        if (status) {
+          state[sessionId].status = status;
         }
-        return transaction;
+      }
+    },
+    false,
+    'updateTransactionStatus'
+  );
+};
+
+export const clearCompletedTransactions = () => {
+  getStore().setState(
+    ({ transactions: state, toasts: toastsState }) => {
+      const sessionIds = Object.keys(state);
+
+      const completedSessionIds = sessionIds.filter((sessionId) => {
+        const session = state[sessionId];
+        if (!session) {
+          return false;
+        }
+
+        const { status } = session;
+
+        const isPending =
+          status === TransactionServerStatusesEnum.pending ||
+          status === TransactionBatchStatusesEnum.signed ||
+          status === TransactionBatchStatusesEnum.sent;
+
+        return !isPending;
       });
-      const areTransactionsSuccessful = state[sessionId]?.transactions?.every(
-        (transaction) => {
-          return getIsTransactionSuccessful(transaction.status);
-        }
+
+      completedSessionIds.forEach((sessionId) => {
+        delete state[sessionId];
+      });
+
+      const filteredTransactionToasts = toastsState.transactionToasts.filter(
+        (toast) => !completedSessionIds.includes(toast.toastId)
       );
 
-      const areTransactionsFailed = state[sessionId]?.transactions?.some(
-        (transaction) => getIsTransactionFailed(transaction.status)
-      );
-
-      const areTransactionsNotExecuted = state[sessionId]?.transactions?.every(
-        (transaction) => getIsTransactionNotExecuted(transaction.status)
-      );
-
-      if (areTransactionsSuccessful) {
-        state[sessionId].status = TransactionBatchStatusesEnum.success;
-      }
-      if (areTransactionsFailed) {
-        state[sessionId].status = TransactionBatchStatusesEnum.fail;
-      }
-      if (areTransactionsNotExecuted) {
-        state[sessionId].status = TransactionBatchStatusesEnum.invalid;
-      }
-    }
-  });
+      toastsState.transactionToasts = filteredTransactionToasts;
+    },
+    false,
+    'clearCompletedTransactions'
+  );
 };

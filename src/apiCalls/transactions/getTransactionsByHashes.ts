@@ -1,44 +1,38 @@
-import axios from 'axios';
-import { TRANSACTIONS_ENDPOINT } from 'apiCalls/endpoints';
-
-import { getState } from 'store/store';
-import { networkSelector } from 'store/selectors';
 import {
-  GetTransactionsByHashesReturnType,
-  PendingTransactionsType
+  TransactionBatchStatusesEnum,
+  TransactionServerStatusesEnum
+} from 'types/enums.types';
+import { ServerTransactionType } from 'types/serverTransactions.types';
+import {
+  TrackedTransactionResultType,
+  SignedTransactionType
 } from 'types/transactions.types';
+import { getServerTransactionsByHashes } from './getServerTransactionsByHashes';
 
 export const getTransactionsByHashes = async (
-  pendingTransactions: PendingTransactionsType
-): Promise<GetTransactionsByHashesReturnType> => {
-  const { apiAddress } = networkSelector(getState());
+  pendingTransactions: SignedTransactionType[]
+): Promise<TrackedTransactionResultType[]> => {
   const hashes = pendingTransactions.map((tx) => tx.hash);
 
-  const { data: responseData } = await axios.get(
-    `${apiAddress}/${TRANSACTIONS_ENDPOINT}`,
-    {
-      params: {
-        hashes: hashes.join(','),
-        withScResults: true
-      }
-    }
-  );
+  const responseData = await getServerTransactionsByHashes(hashes);
 
-  return pendingTransactions.map(({ hash, previousStatus }) => {
+  return pendingTransactions.map((transaction) => {
     const txOnNetwork = responseData.find(
-      (txResponse: any) => txResponse?.txHash === hash
+      (txResponse: ServerTransactionType) =>
+        txResponse?.txHash === transaction.hash
     );
 
     return {
-      hash,
-      data: txOnNetwork?.data,
+      ...transaction,
+      status: txOnNetwork?.status as
+        | TransactionServerStatusesEnum
+        | TransactionBatchStatusesEnum,
       invalidTransaction: txOnNetwork == null,
-      status: txOnNetwork?.status,
-      results: txOnNetwork?.results,
-      sender: txOnNetwork?.sender,
-      receiver: txOnNetwork?.receiver,
-      previousStatus,
-      hasStatusChanged: txOnNetwork && txOnNetwork.status !== previousStatus
+      results: txOnNetwork?.results ?? [],
+      previousStatus: transaction.status?.toString() || '',
+      hasStatusChanged: Boolean(
+        txOnNetwork && txOnNetwork.status !== transaction.status
+      )
     };
   });
 };

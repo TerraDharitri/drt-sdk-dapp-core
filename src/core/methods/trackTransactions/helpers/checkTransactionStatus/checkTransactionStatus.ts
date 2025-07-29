@@ -1,27 +1,17 @@
-import { refreshAccount } from 'utils/account';
+import { pendingTransactionsSessionsSelector } from 'store/selectors/transactionsSelector';
+import { getState } from 'store/store';
 import { checkBatch } from './checkBatch';
-import { getPendingStoreTransactions } from '../getPendingStoreTransactions';
-import { TransactionsTrackerType } from '../../trackTransactions.types';
 
-export async function checkTransactionStatus(
-  props: TransactionsTrackerType & {
-    shouldRefreshBalance?: boolean;
-  }
-) {
-  const { pendingSessions } = getPendingStoreTransactions();
+export async function checkTransactionStatus() {
+  const pendingSessions = pendingTransactionsSessionsSelector(getState());
   if (Object.keys(pendingSessions).length > 0) {
     for (const [sessionId, { transactions }] of Object.entries(
       pendingSessions
     )) {
       await checkBatch({
         sessionId,
-        transactionBatch: transactions,
-        ...props
+        transactionBatch: transactions
       });
     }
-  }
-
-  if (props.shouldRefreshBalance) {
-    await refreshAccount();
   }
 }

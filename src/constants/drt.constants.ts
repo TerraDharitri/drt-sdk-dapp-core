@@ -6,9 +6,9 @@ export const GAS_LIMIT = 50000;
  */
 export const EXTRA_GAS_LIMIT_GUARDED_TX = 50000;
 export const GAS_PRICE = 1000000000;
-export const DECIMALS = 18;
-export const DIGITS = 4;
 export const VERSION = 1;
 export const LEDGER_CONTRACT_DATA_ENABLED_VALUE = 1;
 export const METACHAIN_SHARD_ID = 4294967295;
 export const ALL_SHARDS_SHARD_ID = 4294967280;
+export const REFUNDED_GAS = 'refundedGas';
+export const MULTI_TRANSFER_REWA_TOKEN = 'REWA-000000';
