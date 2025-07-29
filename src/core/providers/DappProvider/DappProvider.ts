@@ -1,17 +1,17 @@
-import { Message } from '@terradharitri/sdk-core/out/message';
-import { Transaction } from '@terradharitri/sdk-core/out/transaction';
+import { Message, Transaction } from 'lib/sdkCore';
 import { IProvider } from '../types/providerFactory.types';
 import { login } from './helpers/login/login';
 import { logout } from './helpers/logout/logout';
-import { signMessage } from './helpers/signMessage/signMessage';
+import { handleSignError } from './helpers/signErrors/handleSignError';
+import { signMessageWithProvider } from './helpers/signMessage/signMessageWithProvider';
 import {
   verifyMessage,
   VerifyMessageReturnType
 } from './helpers/signMessage/verifyMessage';
 import {
-  signTransactions,
+  signTransactionsWithProvider,
   SignTransactionsOptionsType
-} from './helpers/signTransactions/signTransactions';
+} from './helpers/signTransactions/signTransactionsWithProvider';
 
 export class DappProvider {
   private provider: IProvider;
@@ -53,12 +53,17 @@ export class DappProvider {
     transactions: Transaction[],
     options?: SignTransactionsOptionsType
   ): Promise<Transaction[]> {
-    const signedTransactions = await signTransactions({
-      provider: this.provider,
-      transactions,
-      options
-    });
-    return signedTransactions;
+    try {
+      const signedTransactions = await signTransactionsWithProvider({
+        provider: this.provider,
+        transactions,
+        options
+      });
+      return signedTransactions;
+    } catch (error) {
+      const errorMessage = handleSignError(error);
+      throw new Error(errorMessage);
+    }
   }
 
   async signMessage(
@@ -67,15 +72,20 @@ export class DappProvider {
       hasConsentPopup?: boolean;
     }
   ): Promise<Message | null> {
-    const signedMessage = await signMessage({
-      provider: this.provider,
-      message,
-      options
-    });
-    return signedMessage;
+    try {
+      const signedMessage = await signMessageWithProvider({
+        provider: this.provider,
+        message,
+        options
+      });
+      return signedMessage;
+    } catch (error) {
+      const errorMessage = handleSignError(error, 'warning');
+      throw new Error(errorMessage);
+    }
   }
 
-  verifyMessage(signedMessage: string): VerifyMessageReturnType {
-    return verifyMessage(signedMessage);
+  async verifyMessage(signedMessage: string): Promise<VerifyMessageReturnType> {
+    return await verifyMessage(signedMessage);
   }
 }

@@ -1,19 +1,18 @@
-import { nativeAuth } from 'services/nativeAuth';
-import { setAddress } from 'store/actions/account';
-import { setTokenLogin } from 'store/actions/loginInfo/loginInfoActions';
+import { registerWebsocketListener } from 'core/methods/initApp/websocket/registerWebsocket';
 import { IProvider } from 'core/providers/types/providerFactory.types';
-import { nativeAuthConfigSelector } from 'store/selectors';
-import { getState } from 'store/store';
+import { nativeAuth } from 'services/nativeAuth';
 import { NativeAuthConfigType } from 'services/nativeAuth/nativeAuth.types';
 import { logoutAction } from 'store/actions';
+import { setAddress } from 'store/actions/account';
+import { setTokenLogin } from 'store/actions/loginInfo/loginInfoActions';
+import { nativeAuthConfigSelector } from 'store/selectors';
+import { getState } from 'store/store';
 import { extractAccountFromToken } from './helpers/extractAccountFromToken';
-import { registerWebsocketListener } from 'core/methods/initApp/websocket/registerWebsocket';
 
 async function loginWithoutNativeToken(provider: IProvider) {
   await provider.login();
 
-  // TODO update this when the provider will be standardized
-  const address = await provider.getAddress?.();
+  const address = await provider.getAddress();
 
   if (!address) {
     throw new Error('Address not found');
@@ -36,7 +35,7 @@ async function loginWithNativeToken(
     noCache: true
   });
 
-  const { address, signature, ...loginResult } = await provider.login?.({
+  const { address, signature, ...loginResult } = await provider.login({
     token: loginToken
   });
 

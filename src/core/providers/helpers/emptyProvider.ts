@@ -1,15 +1,13 @@
 import { Message, Transaction } from '@terradharitri/sdk-core';
-import { EngineTypes } from 'utils/walletconnect/__sdkWalletconnectProvider';
-import {
-  IProvider,
-  ProviderTypeEnum
-} from 'core/providers/types/providerFactory.types';
 import {
   IDAppProviderAccount,
   IDAppProviderOptions
 } from '@terradharitri/sdk-dapp-utils/out';
-
-export const DAPP_INIT_ROUTE = '/dapp/init';
+import {
+  IProvider,
+  ProviderTypeEnum
+} from 'core/providers/types/providerFactory.types';
+import { EngineTypes } from 'utils/walletconnect/__sdkWalletconnectProvider';
 
 const notInitializedError = (caller: string) => {
   return `Unable to perform ${caller}, Provider not initialized`;
@@ -33,7 +31,7 @@ export class EmptyProvider implements IProvider {
   }
 
   getAccount(): IDAppProviderAccount | null {
-    throw new Error(notInitializedError(`unable to get account`));
+    throw new Error(notInitializedError('unable to get account'));
   }
   setAccount(account: IDAppProviderAccount): void {
     throw new Error(
@@ -112,10 +110,6 @@ export class EmptyProvider implements IProvider {
 
   async getAddress(): Promise<string | undefined> {
     throw new Error(notInitializedError('getAddress'));
-  }
-
-  getTokenLoginSignature(): string | undefined {
-    throw new Error(notInitializedError(`getSignature`));
   }
 
   getType(): ProviderTypeEnum {

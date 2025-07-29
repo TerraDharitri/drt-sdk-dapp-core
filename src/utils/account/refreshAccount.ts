@@ -1,15 +1,20 @@
 import { getAddress } from 'core/methods/account/getAddress';
 import { getLatestNonce } from 'core/methods/account/getLatestNonce';
-import { getAccountProvider } from 'core/providers/accountProvider';
+import { getNetworkConfig } from 'core/methods/network/getNetworkConfig';
+import { getAccountProvider } from 'core/providers/helpers/accountProvider';
 import { setAccount } from 'store/actions';
 import { fetchAccount } from './fetchAccount';
 
 const setNewAccount = async () => {
   try {
     const address = getAddress();
+    const network = getNetworkConfig();
 
     try {
-      const account = await fetchAccount(address);
+      const account = await fetchAccount({
+        address,
+        baseURL: network.apiAddress
+      });
 
       if (account != null) {
         const accountData = {

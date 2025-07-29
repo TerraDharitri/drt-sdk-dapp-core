@@ -1,8 +1,11 @@
+import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { AssetType, ScamInfoType } from './account.types';
+import {
+  TransactionBatchStatusesEnum,
+  TransactionServerStatusesEnum
+} from './enums.types';
 import { DcdtEnumType, NftEnumType } from './tokens.types';
 import { SignedTransactionType } from './transactions.types';
-
-//#region server trasactions
 
 export interface ScResultType {
   callType: string;
@@ -241,7 +244,7 @@ export interface ServerTransactionType {
   sender: string;
   senderShard: number;
   signature: string;
-  status: string;
+  status: TransactionServerStatusesEnum | TransactionBatchStatusesEnum;
   inTransit?: boolean;
   timestamp: number;
   value: string;
@@ -283,10 +286,27 @@ export enum TransactionDirectionEnum {
   OUT = 'Out'
 }
 
+export interface TransactionAgeType {
+  timeAgo: string;
+  tooltip: string;
+}
+
+export interface TransactionMethodType {
+  name: string;
+  actionDescription?: string;
+}
+
+export interface TransactionIconInfoType {
+  icon?: IconDefinition;
+  tooltip: string;
+}
+
 export interface InterpretedTransactionType extends ServerTransactionType {
   transactionDetails: {
+    age: TransactionAgeType;
     direction?: TransactionDirectionEnum;
-    method: string;
+    iconInfo: TransactionIconInfoType;
+    method: TransactionMethodType;
     transactionTokens: TokenArgumentType[];
     isContract?: boolean;
   };

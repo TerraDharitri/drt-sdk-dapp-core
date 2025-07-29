@@ -1,9 +1,10 @@
+import { getNetworkConfigFromApi } from 'apiCalls/configuration/getNetworkConfigFromApi';
 import { getServerConfiguration } from 'apiCalls/configuration/getServerConfiguration';
-import { EnvironmentsEnum } from 'types/enums.types';
-import { CustomNetworkType, NetworkType } from 'types/network.types';
-import { initializeNetworkConfig } from './networkActions';
 import { fallbackNetworkConfigurations } from 'constants/network.constants';
 import { emptyNetwork } from 'store/slices/network/emptyNetwork';
+import { EnvironmentsEnum } from 'types/enums.types';
+import { NetworkType, CustomNetworkType } from 'types/network.types';
+import { initializeNetworkConfig } from './networkActions';
 
 export type InitializeNetworkPropsType = {
   customNetworkConfig?: CustomNetworkType;
@@ -32,31 +33,35 @@ export const initializeNetwork = async ({
 
   const localConfig: NetworkType = {
     ...baseConfig,
-    apiTimeout: String(baseConfig.apiTimeout),
-    walletConnectBridgeAddresses: baseConfig.walletConnectBridgeAddresses || [],
-    walletConnectV2RelayAddresses:
-      'walletConnectV2RelayAddresses' in baseConfig
-        ? baseConfig.walletConnectV2RelayAddresses
-        : ['wss://relay.walletconnect.com']
+    apiTimeout: String(baseConfig.apiTimeout)
   };
 
   const fallbackApiAddress = fallbackConfig?.apiAddress;
 
-  if (fetchConfigFromServer) {
-    const serverConfig = await getServerConfiguration(
-      customNetworkApiAddress || fallbackApiAddress
-    );
+  if (!isFoundEnv && fetchConfigFromServer) {
+    const apiAddress = customNetworkApiAddress || fallbackApiAddress;
+    const dappConfig = await getServerConfiguration(apiAddress);
 
-    if (serverConfig != null) {
+    const networkConfig = !localConfig.roundDuration
+      ? await getNetworkConfigFromApi(apiAddress)
+      : null;
+
+    if (networkConfig != null) {
+      localConfig.roundDuration = networkConfig.drt_round_duration;
+    }
+
+    if (dappConfig != null) {
       const apiConfig: NetworkType = {
-        ...fallbackConfig,
-        ...serverConfig,
+        ...localConfig,
+        ...dappConfig,
         ...customNetworkConfig
       };
 
       initializeNetworkConfig(apiConfig);
+      return apiConfig;
     }
   }
 
   initializeNetworkConfig(localConfig);
+  return localConfig;
 };

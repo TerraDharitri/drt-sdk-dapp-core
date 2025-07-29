@@ -1,7 +1,10 @@
-import { StorageCallback } from 'store/storage';
-import { CustomNetworkType } from 'types/network.types';
-import { EnvironmentsEnum } from 'types/enums.types';
+import { CrossWindowConfig } from 'core/providers/strategies/CrossWindowProviderStrategy/types';
+import { WalletConnectConfig } from 'core/providers/strategies/WalletConnectProviderStrategy/types';
+import { ICustomProvider } from 'core/providers/types/providerFactory.types';
 import { NativeAuthConfigType } from 'services/nativeAuth/nativeAuth.types';
+import { StorageCallback } from 'store/storage';
+import { EnvironmentsEnum } from 'types/enums.types';
+import { CustomNetworkType } from 'types/network.types';
 
 type BaseDappConfigType = {
   /**
@@ -12,17 +15,21 @@ type BaseDappConfigType = {
    */
   nativeAuth?: boolean | NativeAuthConfigType;
   /**
-   * default: `true`
+   * Customize exising providers
    */
-  enableTansactionTracker?: boolean;
+  providers?: {
+    crossWindow?: CrossWindowConfig;
+    walletConnect?: WalletConnectConfig;
+  };
 };
 
 export type EnvironmentDappConfigType = BaseDappConfigType & {
   /**
-   * If passed in, will automatically initialize the network with the given environment.
+   * If passed in, will automatically initialize the network with the given environment and skip fetching `/dapp/config` data from server.
    */
   environment: EnvironmentsEnum;
   network?: CustomNetworkType;
+  successfulToastLifetime?: number;
 };
 
 export type CustomNetworkDappConfigType = BaseDappConfigType & {
@@ -32,6 +39,7 @@ export type CustomNetworkDappConfigType = BaseDappConfigType & {
    */
   network: CustomNetworkType & { apiAddress: string };
   environment?: never;
+  successfulToastLifetime?: number;
 };
 
 export type DappConfigType =
@@ -49,4 +57,5 @@ export type InitAppType = {
     getStorageCallback: StorageCallback;
   };
   dAppConfig: DappConfigType;
+  customProviders?: ICustomProvider[];
 };

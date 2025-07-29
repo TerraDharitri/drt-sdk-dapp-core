@@ -1,6 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { server, rest, mockResponse } from '../../../__mocks__';
+import { server, rest, mockResponse } from '__mocks__';
 import { nativeAuth } from '../nativeAuth';
 
 describe('Native Auth', () => {
