@@ -2,17 +2,17 @@ import { UITagsEnum } from 'constants/UITags.enum';
 
 import {
   IAccountScreenData,
-  IConfirmScreenData,
-  IConnectScreenData,
   ILedgerAccount,
   ILedgerConnectPanelData,
-  LedgerConnectPanel
-} from 'lib/sdkDappCoreUi';
+  IConnectScreenData,
+  IConfirmScreenData
+} from 'core/providers/strategies/LedgerProviderStrategy/types/ledger.types';
+import { DrtLedgerFlow } from 'lib/sdkDappCoreUi';
 import { LedgerConnectEventsEnum } from './types';
-import { SidePanelBaseManager } from '../../SidePanelBaseManager/SidePanelBaseManager';
+import { SidePanelBaseManager } from '../SidePanelBaseManager/SidePanelBaseManager';
 
 export class LedgerConnectStateManager extends SidePanelBaseManager<
-  LedgerConnectPanel,
+  DrtLedgerFlow,
   ILedgerConnectPanelData,
   LedgerConnectEventsEnum
 > {
@@ -49,7 +49,8 @@ export class LedgerConnectStateManager extends SidePanelBaseManager<
 
   // third screen data
   private initialConfirmScreenData: IConfirmScreenData = {
-    selectedAddress: ''
+    selectedAddress: '',
+    addressExplorerLink: ''
   };
 
   private confirmScreenData: IConfirmScreenData = {
@@ -165,7 +166,7 @@ export class LedgerConnectStateManager extends SidePanelBaseManager<
 
   protected getUIElementName(): UITagsEnum {
     return this.anchor
-      ? UITagsEnum.LEDGER_CONNECT
+      ? UITagsEnum.LEDGER_FLOW
       : UITagsEnum.LEDGER_CONNECT_PANEL;
   }
 

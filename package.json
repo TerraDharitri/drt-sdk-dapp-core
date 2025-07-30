@@ -1,8 +1,8 @@
 {
   "name": "@terradharitri/sdk-dapp-core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "out/index.js",
-  "module": "out/index.js",
+  "module": "out/index.mjs",
   "types": "out/index.d.ts",
   "description": "A library to hold core logic for building TypeScript dApps on the DharitrI blockchain",
   "author": "DharitrI",
@@ -20,13 +20,12 @@
   },
   "scripts": {
     "unpublish-verdaccio": "npm unpublish @terradharitri/sdk-dapp-core --force --registry http://localhost:4873",
-    "publish-verdaccio": "npm run unpublish-verdaccio && npm run compile-next && npm publish --registry http://localhost:4873/",
+    "publish-verdaccio": "npm run unpublish-verdaccio && npm run build && npm publish --registry http://localhost:4873/",
     "compile": "tsc && tsc-alias",
     "build-esbuild": "rimraf out && node esbuild.js",
     "build": "yarn build-esbuild && yarn compile",
     "test": "jest",
-    "lint": "eslint --fix src",
-    "compile-next": "rimraf out && tsc --p tsconfig.next.json && tsc-alias --project tsconfig.next.json"
+    "lint": "eslint --fix src"
   },
   "publishConfig": {
     "access": "public"
@@ -34,7 +33,7 @@
   "dependencies": {
     "@lifeomic/axios-fetch": "3.0.1",
     "@terradharitri/sdk-core": "^0.1.12",
-    "@terradharitri/sdk-dapp-utils": "^0.1.5",
+    "@terradharitri/sdk-dapp-utils": "^0.1.4",
     "@terradharitri/sdk-extension-provider": "0.1.3",
     "@terradharitri/sdk-hw-provider": "0.1.4",
     "@terradharitri/sdk-metamask-provider": "0.1.3",
@@ -54,12 +53,12 @@
   },
   "peerDependencies": {
     "@terradharitri/sdk-core": "^0.1.12",
-    "@terradharitri/sdk-dapp-utils": "^0.1.5",
+    "@terradharitri/sdk-dapp-utils": "^0.1.4",
     "axios": ">=1.7.4",
     "bignumber.js": "9.x"
   },
   "optionalDependencies": {
-    "@terradharitri/sdk-dapp-core-ui": "0.0.3"
+    "@terradharitri/sdk-dapp-core-ui": ">=0.0.4"
   },
   "resolutions": {
     "string-width": "4.1.0"
