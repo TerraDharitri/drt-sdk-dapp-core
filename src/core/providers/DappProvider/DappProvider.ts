@@ -28,6 +28,10 @@ export class DappProvider {
     return await login(this.provider);
   }
 
+  isInitialized() {
+    return this.provider.isInitialized();
+  }
+
   async logout(
     options = {
       shouldBroadcastLogoutAcrossTabs: true,
@@ -87,5 +91,9 @@ export class DappProvider {
 
   async verifyMessage(signedMessage: string): Promise<VerifyMessageReturnType> {
     return await verifyMessage(signedMessage);
+  }
+
+  async cancelLogin() {
+    this.provider.cancelLogin?.();
   }
 }

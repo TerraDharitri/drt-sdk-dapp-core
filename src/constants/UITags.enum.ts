@@ -6,5 +6,6 @@ export enum UITagsEnum {
   SIGN_TRANSACTIONS_PANEL = 'drt-sign-transactions-panel',
   TOAST_LIST = 'drt-toast-list',
   WALLET_CONNECT = 'drt-wallet-connect-provider',
-  WALLET_CONNECT_PANEL = 'drt-wallet-connect-panel'
+  WALLET_CONNECT_PANEL = 'drt-wallet-connect-panel',
+  UNLOCK_PANEL = 'drt-unlock-panel'
 }

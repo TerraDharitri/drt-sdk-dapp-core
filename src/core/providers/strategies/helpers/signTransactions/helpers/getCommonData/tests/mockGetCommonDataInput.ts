@@ -47,7 +47,7 @@ export const mockGetCommonDataInput = {
         chainID: 'D',
         version: 1
       },
-      multiTxData: '4d45582d613635396430@@e177704bc43f9bee3106',
+      multiTxData: '4D4F412d613635396430@@e177704bc43f9bee3106',
       transactionIndex: 1,
       needsSigning: false
     },
@@ -105,12 +105,12 @@ export const mockGetCommonDataInput = {
       receiver:
         '00000000000000000500139ed7ae4aa03792e6bcb332394a40fe746eefa47ceb'
     },
-    '4d45582d613635396430@@e177704bc43f9bee3106': {
+    '4D4F412d613635396430@@e177704bc43f9bee3106': {
       tokenId: 'MOA-a659d0',
       amount: '1064735712967374589014278',
       type: 'dcdtTransaction',
       nonce: '',
-      multiTxData: '4d45582d613635396430@@e177704bc43f9bee3106',
+      multiTxData: '4D4F412d613635396430@@e177704bc43f9bee3106',
       receiver:
         '00000000000000000500139ed7ae4aa03792e6bcb332394a40fe746eefa47ceb'
     },

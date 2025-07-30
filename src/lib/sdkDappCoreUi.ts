@@ -6,6 +6,7 @@ export type { DrtPendingTransactionsPanel } from '@terradharitri/sdk-dapp-core-u
 export type { IPendingTransactionsPanelData } from '@terradharitri/sdk-dapp-core-ui/dist/types/components/functional/pending-transactions-panel/pending-transactions-panel.types.d';
 export type { DrtNotificationsFeed } from '@terradharitri/sdk-dapp-core-ui/dist/web-components/drt-notifications-feed';
 export type { DrtToastList } from '@terradharitri/sdk-dapp-core-ui/dist/web-components/drt-toast-list';
+export type { DrtUnlockPanel } from '@terradharitri/sdk-dapp-core-ui/dist/web-components/drt-unlock-panel';
 export type { IEventBus } from '@terradharitri/sdk-dapp-core-ui/dist/types/utils/EventBus';
 export type {
   ITransactionListItem,

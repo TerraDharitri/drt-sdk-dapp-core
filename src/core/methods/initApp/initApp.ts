@@ -5,7 +5,10 @@ import { ToastManager } from 'core/managers/internal/ToastManager/ToastManager';
 import { login } from 'core/providers/DappProvider/helpers/login/login';
 import { restoreProvider } from 'core/providers/helpers/restoreProvider';
 import { ProviderFactory } from 'core/providers/ProviderFactory';
-import { ProviderTypeEnum } from 'core/providers/types/providerFactory.types';
+import {
+  ICustomProvider,
+  ProviderTypeEnum
+} from 'core/providers/types/providerFactory.types';
 import { getDefaultNativeAuthConfig } from 'services/nativeAuth/methods/getDefaultNativeAuthConfig';
 import { NativeAuthConfigType } from 'services/nativeAuth/nativeAuth.types';
 import { initializeNetwork } from 'store/actions';
@@ -87,12 +90,16 @@ export async function initApp({
   const isLoggedIn = getIsLoggedIn();
   const account = getAccount();
 
-  if (isInIframe && !isLoggedIn) {
+  if (isInIframe) {
     const provider = await ProviderFactory.create({
       type: ProviderTypeEnum.webview
     });
 
-    await login(provider.getProvider());
+    const isInitialized = provider.isInitialized();
+
+    if (isInitialized && !isLoggedIn) {
+      await login(provider.getProvider());
+    }
   }
 
   const toastManager = ToastManager.getInstance({
@@ -111,12 +118,17 @@ export async function initApp({
     signTransactionsStateManager.init()
   ]);
 
-  const usedProviders = [
+  const usedProviders: ICustomProvider[] = [
     ...((safeWindow as any)?.dharitri?.providers ?? []),
     ...(customProviders || [])
   ];
 
-  ProviderFactory.customProviders(usedProviders || []);
+  const uniqueProviders = usedProviders.filter(
+    (provider, index, arr) =>
+      index === arr.findIndex((item) => item.type === provider.type)
+  );
+
+  ProviderFactory.customProviders = uniqueProviders || [];
 
   if (isLoggedIn && !isAppInitialized) {
     await restoreProvider();

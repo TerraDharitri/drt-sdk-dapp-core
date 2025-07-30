@@ -5,6 +5,7 @@ import {
   SessionTypes,
   OptionalOperation
 } from '@terradharitri/sdk-wallet-connect-provider/out';
+import { providerLabels } from 'constants/providerFactory.constants';
 import { safeWindow } from 'constants/window.constants';
 
 import { PendingTransactionsEventsEnum } from 'core/managers/internal/PendingTransactionsStateManager/types/pendingTransactions.types';
@@ -12,10 +13,7 @@ import { WalletConnectStateManager } from 'core/managers/internal/WalletConnectS
 import { getIsLoggedIn } from 'core/methods/account/getIsLoggedIn';
 import { getAccountProvider } from 'core/providers/helpers/accountProvider';
 import { getPendingTransactionsHandlers } from 'core/providers/strategies/helpers';
-import {
-  IProvider,
-  providerLabels
-} from 'core/providers/types/providerFactory.types';
+import { IProvider } from 'core/providers/types/providerFactory.types';
 import { defineCustomElements, IEventBus } from 'lib/sdkDappCoreUi';
 import { logoutAction } from 'store/actions';
 import {
@@ -155,7 +153,6 @@ export class WalletConnectProviderStrategy {
   private createWalletConnectProvider = async (config: WalletConnectConfig) => {
     const isLoggedIn = getIsLoggedIn();
     const chainId = chainIdSelector(getState());
-    const provider = getAccountProvider();
     const nativeAuthConfig = nativeAuthConfigSelector(getState());
 
     if (nativeAuthConfig) {
@@ -201,6 +198,7 @@ export class WalletConnectProviderStrategy {
       console.error(WalletConnectV2Error.connectError, err);
 
       if (isLoggedIn) {
+        const provider = getAccountProvider();
         await provider.logout();
       }
 

@@ -7,8 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [Fixed ledger double screen](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/158)
+- [Updated providers order](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/157)
+- [Added support for dapps inside iframe/webview](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/156)
+
+## [[0.0.0-alpha.20](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/155)] - 2025-05-05
+
+- [Added custom provider side panel integration](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/154)
+- [Added providers customization support](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/153)
+- [Fixed multisig login](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/150)
 - [Fixed Ledger address table pagination transition state](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/149)
 - [Removed unnecessary next and previous Ledger address table pagination handlers](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/148)
+- [Added cancel login](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/147)
 - [Added `usdValue` to ledger accounts](https://github.com/TerraDharitri/drt-sdk-dapp-core-ui/pull/146)
 - [Fixed logging in without native auth](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/143)
 - [Fixed ledger idle state manager check connection while signing](https://github.com/TerraDharitri/drt-sdk-dapp-core/pull/141)
