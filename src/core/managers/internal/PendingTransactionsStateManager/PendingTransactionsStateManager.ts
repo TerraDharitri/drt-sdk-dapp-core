@@ -1,13 +1,13 @@
 import { UITagsEnum } from 'constants/UITags.enum';
 import {
   IPendingTransactionsPanelData,
-  PendingTransactionsPanel
+  DrtPendingTransactionsPanel
 } from 'lib/sdkDappCoreUi';
 import { PendingTransactionsEventsEnum } from './types/pendingTransactions.types';
-import { SidePanelBaseManager } from '../../SidePanelBaseManager/SidePanelBaseManager';
+import { SidePanelBaseManager } from '../SidePanelBaseManager/SidePanelBaseManager';
 
 export class PendingTransactionsStateManager extends SidePanelBaseManager<
-  PendingTransactionsPanel,
+  DrtPendingTransactionsPanel,
   IPendingTransactionsPanelData,
   PendingTransactionsEventsEnum
 > {
