@@ -19,8 +19,6 @@ out
 .husky
 
 # misc
-.env
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -31,3 +29,4 @@ yarn-debug.log*
 yarn-error.log*
 .yarnrc
 coverage
+config.bat
